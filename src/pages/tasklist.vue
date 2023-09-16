@@ -277,7 +277,7 @@ function open(url, target) {
                   <template v-for="resource in item['resource_list']">
                     <a-card
                         hoverable
-                        :loading="false"
+                        :loading="got_done_data"
                         v-if="resource['attachment_url'] != null"
                         @click.stop="open(resource['resource_preview_url'], '_blank');"
                     >
@@ -335,7 +335,7 @@ function open(url, target) {
                   <template v-for="resource in item['resource_list']">
                     <a-card
                         hoverable
-                        :loading="false"
+                        :loading="got_like_data"
                         v-if="resource['attachment_url'] != null"
                         @click.stop="open(resource['resource_preview_url'], '_blank');"
                     >
