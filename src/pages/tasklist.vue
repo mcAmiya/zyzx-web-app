@@ -216,7 +216,7 @@ function open(url, target) {
                   <span v-if='item["remarks"] !== ""'>{{ item["remarks"] }}</span>
 
                   <!--资料下载-->
-                  <template>
+                  <template v-for="resource in item['resource_list']">
                     <a-card
                         hoverable
                         :loading="got_undone_data"
