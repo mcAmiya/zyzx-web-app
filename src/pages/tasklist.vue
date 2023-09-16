@@ -1,7 +1,18 @@
 <script setup>
 import axios from 'axios'
 import {Base64} from "js-base64";
-import {useRoute, useRouter} from "vue-router";
+
+// 使用全局配置
+import {useStore} from "@/store";
+
+const store = useStore();
+const User = store.UserData;
+
+// 调用父组件(App.vue)的changePage(newPage)函数来切换页面
+const emit = defineEmits(['changePage'])
+const changePage = (newPage) => {
+  emit('changePage', newPage)
+}
 
 function xorEncryptDecrypt(text, key) {
   // 对文本进行异或加解密
@@ -45,10 +56,6 @@ function downloadFile(fileName, saveName) {
 
 }
 
-let router = useRouter()
-let route = useRoute()
-
-const User = history.state.UserArray
 // 输出用户信息
 console.log(`当前用户: ${User.Name}\nToken: ${User.Token}`);
 

@@ -1,8 +1,15 @@
 <script setup>
+// 使用全局配置
+import {useStore} from "@/store";
 
-import {useRoute, useRouter} from "vue-router";
+const store = useStore();
 
-let router = useRouter()
+// 调用父组件(App.vue)的changePage(newPage)函数来切换页面
+const emit = defineEmits(['changePage'])
+const changePage = (newPage) => {
+  emit('changePage', newPage)
+}
+
 const User =
     {
       Zzy: {
@@ -45,7 +52,7 @@ if (customUserToken) {
         v-for="Member in User"
     >
       <a-card
-          @click="router.push({name:'tasklist', state:{UserArray:Member}})"
+          @click="store.setUserData(Member);changePage('tasklist')"
           hoverable
       >
         <template #cover>
