@@ -201,7 +201,6 @@ function open(url, target) {
                     hoverable
                     :loading="got_undone_data"
                     @click="open(item['resource_list'][0]['resource_preview_url'],'_blank')"
-                    v-for="resource in item['resource_list']"
                 >
                   <template #title>
                     <span class="badge bg-danger" style="float: left" v-if="item['is_new'] === true">新</span>
