@@ -57,7 +57,7 @@ function downloadFile(fileName, saveName) {
 }
 
 // 输出用户信息
-console.log(`当前用户: ${User.Name}\nToken: ${User.Token}`);
+console.log(`当前用户: ${User['Name']}\nToken: ${User['Token']}`);
 
 function getExamUrl(
     pageNo = 1,
@@ -100,9 +100,13 @@ const got_like_data = ref(true)
 const pages = ref(1)
 const current = ref(1)
 
+const undone_page_size = ref(50)
+const done_page_size = ref(50)
+const like_page_size = ref(50)
+
 // 未完成
-const getUndoneTaskList = async (pageNo) => {
-  await getJson(getExamUrl(pageNo, 50, false, User.Token)).then((json) => {
+const getUndoneTaskList = async (pageNo, page_size = 50) => {
+  await getJson(getExamUrl(pageNo, page_size, false, User['Token'])).then((json) => {
     undone_data.value = json
     undone_total.value = undone_data.value['data']['total']
     pages.value = undone_data.value['data']['pages']
@@ -112,36 +116,36 @@ const getUndoneTaskList = async (pageNo) => {
 }
 
 // 已完成
-const getDoneTaskList = async (pageNo) => {
-  await getJson(getExamUrl(pageNo, 50, true, User.Token)).then((json) => {
+const getDoneTaskList = async (pageNo, page_size = 50) => {
+  await getJson(getExamUrl(pageNo, page_size, true, User['Token'])).then((json) => {
     done_data.value = json
     done_total.value = done_data.value['data']['total']
     pages.value = done_data.value['data']['pages']
     got_done_data.value = false
   });
 }
-const getLikeTaskList = async (pageNo) => {
+const getLikeTaskList = async (pageNo, page_size) => {
 // 我的收藏
-  await getJson(`https://zyzx-s.zy.com/api/1/aipt/get_like_tasks?pageNo=${pageNo}\&pageSize=50&access_token=${User.Token}`).then((json) => {
+  await getJson(`https://zyzx-s.zy.com/api/1/aipt/get_like_tasks?pageNo=${pageNo}\&pageSize=${page_size}\&access_token=${User['Token']}`).then((json) => {
     like_data.value = json
     like_total.value = like_data.value['data']['total']
     pages.value = like_data.value['data']['pages']
     got_like_data.value = false
   });
 }
-getLikeTaskList(current.value)
-getDoneTaskList(current.value)
-getUndoneTaskList(current.value)
+getLikeTaskList(current.value, undone_page_size.value)
+getDoneTaskList(current.value, done_page_size.value)
+getUndoneTaskList(current.value, like_page_size.value)
 
 
-const onChange = (pageNumber, page) => {
+const onChange = (pageNumber, page_size, page) => {
   console.log('Page: ', pageNumber);
   if (page === 'undone') {
-    getUndoneTaskList(pageNumber)
+    getUndoneTaskList(pageNumber, page_size)
   } else if (page === 'done') {
-    getDoneTaskList(pageNumber)
+    getDoneTaskList(pageNumber, page_size)
   } else if (page === 'like') {
-    getLikeTaskList(pageNumber)
+    getLikeTaskList(pageNumber, page_size)
   }
 
 
@@ -161,21 +165,21 @@ function open(url, target) {
       <!-- <br> -->
       <!-- 返回主页 -->
       <button type="button" class="btn btn-outline-primary mb-1" style="float: right"
-              @click="router.push({name:'login'})">
+              @click="changePage('login')">
         返回主页
       </button>
       <ul class="nav nav-tabs" role="tablist">
-        <li class="nav-item" @click="onChange(current,'undone')">
+        <li class="nav-item" @click="onChange(current,undone_page_size,'undone')">
           <a class="nav-link active" data-bs-toggle="tab" href="#undone">未完成
             <a-badge :count='undone_total' :overflow-count="999999999"/>
           </a>
         </li>
-        <li class="nav-item" @click="onChange(current,'done')">
+        <li class="nav-item" @click="onChange(current,done_page_size,'done')">
           <a class="nav-link" data-bs-toggle="tab" href="#done">已完成
             <a-badge :count='done_total' :overflow-count="999999999"/>
           </a>
         </li>
-        <li class="nav-item" @click="onChange(current,'like')">
+        <li class="nav-item" @click="onChange(current,like_page_size,'like')">
           <a class="nav-link" data-bs-toggle="tab" href="#like">我的收藏
             <a-badge :count='like_total' :overflow-count="999999999"/>
           </a>
@@ -237,7 +241,9 @@ function open(url, target) {
             </a-col>
           </a-row>
         </div>
-        <a-pagination v-model:current="current" show-quick-jumper :total="pages" @change="onChange(current,'undone')"/>
+        <a-pagination v-model:current="current" v-model:page-size="undone_page_size" show-quick-jumper
+                      :total="undone_total"
+                      @change="onChange(current,undone_page_size,'undone')"/>
       </div>
 
       <!--       已完成页面-->
@@ -293,7 +299,9 @@ function open(url, target) {
             </a-col>
           </a-row>
         </div>
-        <a-pagination v-model:current="current" show-quick-jumper :total="pages" @change="onChange(current,'done')"/>
+        <a-pagination v-model:current="current" v-model:page-size="done_page_size" show-quick-jumper
+                      :total="done_total"
+                      @change="onChange(current,done_page_size,'done')"/>
       </div>
 
       <!-- 我的收藏页面 -->
@@ -316,7 +324,9 @@ function open(url, target) {
                   </template>
 
                   <!--完成作业时间-->
-                  <p v-if="item['finish_time'] !== null">完成时间：{{ item['publish_time'] }} --> {{ item['finish_time'] }}</p>
+                  <p v-if="item['finish_time'] !== null">完成时间：{{ item['publish_time'] }} --> {{
+                      item['finish_time']
+                    }}</p>
                   <p v-else>发布时间：{{ item['publish_time'] }}</p>
                   <!--教师叮嘱-->
                   <span v-if="item['remarks'] !== null">{{ item['remarks'] }}</span>
@@ -347,7 +357,9 @@ function open(url, target) {
             </a-col>
           </a-row>
         </div>
-        <a-pagination v-model:current="current" show-quick-jumper :total="pages" @change="onChange(current,'like')"/>
+        <a-pagination v-model:current="current" v-model:page-size="like_page_size" show-quick-jumper
+                      :total="like_total"
+                      @change="onChange(current, like_page_size,'like')"/>
       </div>
     </div>
   </div>
