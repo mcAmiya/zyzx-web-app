@@ -22,17 +22,18 @@ const User =
       }
     }
 
-const customUserToken = useRoute().query.token
-let customUserName = useRoute().query.name
+const params = new URLSearchParams(window.location.search)
+const customUserToken = params.get('token')
+let customUserName = params.get('name')
+
 if (customUserName == null) {
   customUserName = 'CustomUser'
 }
 if (customUserToken) {
-  router.push({
-    name: 'tasklist',
-    state: {UserArray: {Name: customUserName, Token: customUserToken}}
-  })
+  store.setUserData({Name: customUserName, Token: customUserToken})
+  changePage('tasklist')
 }
+
 </script>
 
 <template>
