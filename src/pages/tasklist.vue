@@ -2,6 +2,12 @@
 import axios from 'axios'
 import {Base64} from "js-base64";
 
+// url host
+// 旧版本
+// const urlHost = 'https://zyzx-s.zy.com'
+// 新版本
+const urlHost = 'https://zxx.zy.com/zxx'
+
 // 使用全局配置
 import {useStore} from "@/store";
 
@@ -65,7 +71,7 @@ function getExamUrl(
     finished = false,
     access_token = ""
 ) {
-  return `https://zyzx-s.zy.com/api/1/aipt/get_tasks?\
+  return `${urlHost}/api/1/aipt/get_tasks?\
 pageNo=${pageNo}\
 &pageSize=${pageSize}\
 &finished=${finished}\
@@ -126,7 +132,7 @@ const getDoneTaskList = async (pageNo, page_size = 50) => {
 }
 const getLikeTaskList = async (pageNo, page_size) => {
 // 我的收藏
-  await getJson(`https://zyzx-s.zy.com/api/1/aipt/get_like_tasks?pageNo=${pageNo}\&pageSize=${page_size}\&access_token=${User['Token']}`).then((json) => {
+  await getJson(`${urlHost}/api/1/aipt/get_like_tasks?pageNo=${pageNo}\&pageSize=${page_size}\&access_token=${User['Token']}`).then((json) => {
     like_data.value = json
     like_total.value = like_data.value['data']['total']
     pages.value = like_data.value['data']['pages']
