@@ -6,7 +6,7 @@ import {Base64} from "js-base64";
 // 旧版本
 // const urlHost = 'https://zyzx-s.zy.com'
 // 新版本
-const urlHost = 'https://zxx.zy.com/zxx'
+const urlHost = 'https://zxx.zy.com/zyzxs'
 
 // 使用全局配置
 import {useStore} from "@/store";
